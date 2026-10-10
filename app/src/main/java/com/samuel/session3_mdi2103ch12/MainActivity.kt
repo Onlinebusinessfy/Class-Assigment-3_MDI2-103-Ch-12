@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -108,8 +110,16 @@ fun RestaurantScreen(){
         //Challenge 6
         Button(
             onClick = {
-                waitingList.addAll(vipCustomers)
-                message = "VIP customer added"
+                //waitingList.addAll(vipCustomers)
+                //message = "VIP customer added"
+                    val currentTime = LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a"))
+
+                    vipCustomers.forEach { vipCustomers ->
+                        waitingList.add(vipCustomers)
+                        customersTime[vipCustomers] = currentTime
+                    }
+
+                    message = "VIP customers added at $currentTime"
                 },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -132,6 +142,64 @@ fun RestaurantScreen(){
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Seat Next Customer")
+        }
+
+        //CHALLENGE 1 SESSION 4
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text("Message: $message")
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            //CHALLENGE 2
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text("Waiting List (Queue)")
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                //CHALLENGE 3
+                if (waitingList.isEmpty()){
+                    Text("No customers waiting")
+                } else {
+                    //waitingList.forEachIndexed { index, customer ->
+                    //Text("${index +1 }, $customer")
+
+                    waitingList.forEachIndexed { index, customer ->
+                        val arrivalTime = customersTime[customer] ?: "Unknown"
+
+                        Text("${index + 1}. $customer - Arrived at: $arrivalTime")
+                    }
+                }
+            }
+        }
+
+        //CHALLENGE 4
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text("Seated History (Stack)")
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                //CHALLENGE 5
+                if (seatedHistory.isEmpty()){
+                    Text("No customers seated yet")
+                } else {
+                    seatedHistory.reversed().forEach { customer ->
+                        Text("- $customer")
+                    }
+                }
+            }
         }
     }
 }
